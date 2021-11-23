@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import utils.EMF_Creator;
 
-//Disabled
+@Disabled
 public class LoginEndpointTest {
 
     private static final int SERVER_PORT = 7777;
@@ -31,7 +31,7 @@ public class LoginEndpointTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    
+
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
         return GrizzlyHttpServerFactory.createHttpServer(BASE_URI, rc);
@@ -54,7 +54,7 @@ public class LoginEndpointTest {
     public static void closeTestServer() {
         //Don't forget this, if you called its counterpart in @BeforeAll
         EMF_Creator.endREST_TestWithDB();
-        
+
         httpServer.shutdownNow();
     }
 

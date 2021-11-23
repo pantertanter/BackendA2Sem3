@@ -1,10 +1,10 @@
 name: Github actions with maven build and deploy
-on: 
+on:
   push:
-    branches: 
+    branches:
     - main
 jobs:
-  Do-the-travis-thing:
+  BackendA2Sem3CI:
     runs-on: ubuntu-20.04 #or ubuntu-latest
     # services:
     #   mysql:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
       - name: setup jdk 11
         uses: actions/setup-java@v2
-        with: 
+        with:
           java-version: '11'
           distribution: 'adopt' # openjdk see the setup java action: https://github.com/actions/setup-java
       # - name: Set up MySQL
