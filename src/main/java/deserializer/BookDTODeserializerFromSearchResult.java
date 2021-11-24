@@ -79,7 +79,8 @@ public class BookDTODeserializerFromSearchResult implements JsonDeserializer<Boo
             authors.addAll(getAuthors(authorKeys, authorNames));
         }
 
-
+        String[] workKeyArray = jsonObject.get("key").getAsString().split("/");
+        String workKey = workKeyArray[workKeyArray.length-1];
 
         // description is retrieved from the "work" of the book
         // TODO: Implement getting the work in SearchFacade
@@ -96,7 +97,7 @@ public class BookDTODeserializerFromSearchResult implements JsonDeserializer<Boo
             }
         }
 
-        return new BookDTO(title, first_publish_year, number_of_pages_median, thumbnail_urls, authors, subjects);
+        return new BookDTO(workKey, title, first_publish_year, number_of_pages_median, thumbnail_urls, authors, subjects);
     }
 
     // TODO: The subjects don't match their key because the keys are sorted alphabetically.
