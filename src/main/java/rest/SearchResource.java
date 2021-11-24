@@ -28,12 +28,7 @@ public class SearchResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{search}")
     public String searchBasic(@PathParam("search") String search) throws IOException {
-        /* TODO: make DTOs for books and this search result.
-            Include urls for thumbnails.
-            Dont know what to do with authors yet, if they should be a nested object or not.
-              It would be a lot repeated objects if the same author wrote a lot of books in the search result
-            Maybe add pagination parameters to the endpoint.
-         */
+        /* TODO: Maybe add pagination parameters to the endpoint. Limit is currently in SearchFacade*/
         BookSearchResultsDTO result = searchFacade.getBookSearchResult(search);
         return GSON.toJson(result);
     }

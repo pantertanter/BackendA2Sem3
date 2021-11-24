@@ -32,7 +32,8 @@ public class SearchFacade {
 
         search = search.replace(' ',  '+');
         String baseUrl = "https://openlibrary.org";
-        String url = String.format("%s/search.json?q=%s", baseUrl, search);
+        int limit = 25;
+        String url = baseUrl + "/search.json?q=" + search + "&limit=" + limit;
         String json = HttpUtils.fetch(url);
         return bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
     }
