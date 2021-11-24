@@ -46,10 +46,7 @@ public class BookDTODeserializerFromSearchResult implements JsonDeserializer<Boo
         if (coverIdElement != null && !coverIdElement.isJsonNull()) {
             coverId = coverIdElement.getAsInt();
         }
-        List<String> thumbnail_urls = new ArrayList<>();
-        if (coverId != 0) {
-            thumbnail_urls.addAll(searchFacade.getCoverUrlsById(coverId));
-        }
+        List<String> thumbnail_urls = searchFacade.getCoverUrlsById(coverId);
 
         JsonArray subjectKeys = null;
         JsonElement subjectKeysElement = jsonObject.get("subject_key");

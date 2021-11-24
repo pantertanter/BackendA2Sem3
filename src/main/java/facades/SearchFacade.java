@@ -40,10 +40,17 @@ public class SearchFacade {
     // when we need author covers, this can be refactored to be more generic, with other methods that call this for book/author specifically
     public List<String> getCoverUrlsById(int id) {
         List<String> urls = new ArrayList<>();
-        String baseUrl = String.format("https://covers.openlibrary.org/b/id/%d-", id);
-        urls.add(baseUrl + "S.jpg");
-        urls.add(baseUrl + "M.jpg");
-        urls.add(baseUrl + "L.jpg");
+        if (id == 0) {
+            urls.add("https://openlibrary.org/images/icons/avatar_book-sm.png");
+            urls.add("https://openlibrary.org/images/icons/avatar_book.png");
+            urls.add("https://openlibrary.org/images/icons/avatar_book-lg.png");
+        }
+        else {
+            String baseUrl = "https://covers.openlibrary.org/b/id/" + id;
+            urls.add(baseUrl + "-S.jpg");
+            urls.add(baseUrl + "-M.jpg");
+            urls.add(baseUrl + "-L.jpg");
+        }
         return urls;
     }
 }
