@@ -3,6 +3,7 @@ package facades;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import deserializer.BookSearchResultsDTODeserializer;
+import dtos.AuthorDTO;
 import dtos.BookSearchResultsDTO;
 import utils.HttpUtils;
 
@@ -36,6 +37,13 @@ public class SearchFacade {
         String url = baseUrl + "/search.json?q=" + search + "&limit=" + limit;
         String json = HttpUtils.fetch(url);
         return bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
+    }
+
+    public AuthorDTO getAuthor(String id) throws IOException {
+        Gson gson = new Gson();
+        String url = "https://openlibrary.org/authors/" + id + ".json";
+        String json = HttpUtils.fetch(url);
+        return gson.fromJson(json, AuthorDTO.class);
     }
 
     // when we need author covers, this can be refactored to be more generic, with other methods that call this for book/author specifically
