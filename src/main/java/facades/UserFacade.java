@@ -6,6 +6,7 @@ import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.WebApplicationException;
 
 import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
@@ -52,7 +53,11 @@ public class UserFacade {
 
     public UserDTO signup(String username, String password) {
         EntityManager em = emf.createEntityManager();
-        User user = new User(username, password);
+        User user = em.find(User.class, username);
+        if (user != null) {
+            throw new WebApplicationException("Username is already taken.", 409);
+        }
+        user = new User(username, password);
         Role role = new Role("user");   // this works, but I worry slightly that we don't get the actual role entity with "find"
         user.addRole(role);
         em.getTransaction().begin();
