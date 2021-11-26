@@ -3,7 +3,7 @@ package security;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import entities.User;
+import dtos.UserDTO;
 import errorhandling.API_Exception;
 import facades.UserFacade;
 import utils.EMF_Creator;
@@ -31,7 +31,7 @@ public class SignupEndpoint {
         } catch (Exception e) {
             throw new API_Exception("Malformed JSON Supplied",400,e);
         }
-        User user = USER_FACADE.signup(username, password);
+        UserDTO user = USER_FACADE.signup(username, password);
         return new Gson().toJson(user);
     }
 }
