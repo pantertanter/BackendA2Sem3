@@ -61,10 +61,15 @@ public class UserFacade {
         user = new User(username, password);
         Role role = new Role("user");   // this works, but I worry slightly that we don't get the actual role entity with "find"
         user.addRole(role);
-        em.getTransaction().begin();
-        em.persist(user);
-        em.getTransaction().commit();
-        return new UserDTO(user);
+        try {
+            em.getTransaction().begin();
+            em.persist(user);
+            em.getTransaction().commit();
+            return new UserDTO(user);
+        }
+        finally {
+            em.close();
+        }
     }
 
     public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) {
@@ -72,10 +77,15 @@ public class UserFacade {
         User user = em.find(User.class, username);
         LibraryItem itemEntity = new LibraryItem(itemDTO);
         user.addToLibrary(itemEntity);
-        em.getTransaction().begin();
-        em.merge(user);
-        em.getTransaction().commit();
-        return new LibraryItemDTO(itemEntity);
+        try {
+            em.getTransaction().begin();
+            em.merge(user);
+            em.getTransaction().commit();
+            return new LibraryItemDTO(itemEntity);
+        }
+        finally {
+            em.close();
+        }
     }
 
     public static void main(String[] args) {
