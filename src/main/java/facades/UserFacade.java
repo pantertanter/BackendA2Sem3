@@ -67,7 +67,7 @@ public class UserFacade {
         return new UserDTO(user);
     }
 
-    public List<LibraryItemDTO> addBook(String username, LibraryItemDTO itemDTO) {
+    public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) {
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, username);
         LibraryItem itemEntity = new LibraryItem(itemDTO);
@@ -75,7 +75,7 @@ public class UserFacade {
         em.getTransaction().begin();
         em.merge(user);
         em.getTransaction().commit();
-        return LibraryItemDTO.getDTOs(user.getLibraryItems());
+        return new LibraryItemDTO(itemEntity);
     }
 
     public static void main(String[] args) {

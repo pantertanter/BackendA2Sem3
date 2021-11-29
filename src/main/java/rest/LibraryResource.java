@@ -13,7 +13,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
-import java.util.List;
 
 @Path("library")
 public class LibraryResource {
@@ -35,14 +34,13 @@ public class LibraryResource {
     }
 
     @POST
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("add")
+    @Path("add/{key}")
     @RolesAllowed("user")
-    public String addBook(String jsonString) {
+    public String addBook(@PathParam("key") String key) {
         String username = securityContext.getUserPrincipal().getName();
-        LibraryItemDTO itemDTO = GSON.fromJson(jsonString, LibraryItemDTO.class);
-        List<LibraryItemDTO> newLibrary = userFacade.addBook(username, itemDTO);
-        return GSON.toJson(newLibrary);
+        LibraryItemDTO itemDTO = new LibraryItemDTO(key);
+        LibraryItemDTO resultDTO = userFacade.addBook(username, itemDTO);
+        return GSON.toJson(resultDTO);
     }
 }
