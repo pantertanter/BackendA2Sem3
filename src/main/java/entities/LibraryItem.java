@@ -18,6 +18,10 @@ public class LibraryItem {
     public LibraryItem() {
     }
 
+    public LibraryItem(String bookKey) {
+        this.bookKey = bookKey;
+    }
+
     public LibraryItem(LibraryItemDTO dto) {
         this.bookKey = dto.getBookKey();
     }

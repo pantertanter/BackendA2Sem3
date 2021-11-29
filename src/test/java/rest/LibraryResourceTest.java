@@ -1,5 +1,6 @@
 package rest;
 
+import entities.LibraryItem;
 import entities.Role;
 import entities.User;
 import io.restassured.RestAssured;
@@ -69,6 +70,8 @@ class LibraryResourceTest {
         admin.addRole(adminRole);
         both.addRole(userRole);
         both.addRole(adminRole);
+
+        user.addToLibrary(new LibraryItem("OL679360W"));
 
         try {
             em.getTransaction().begin();
@@ -162,5 +165,18 @@ class LibraryResourceTest {
                 .statusCode(403)
                 .body("code", equalTo(403))
                 .body("message", equalTo("Not authenticated - do login"));
+    }
+
+    @Test
+    void getLibrary() {
+        login("user", "test");
+        given()
+                .accept(MediaType.APPLICATION_JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .get("/library/get")
+                .then()
+                .statusCode(200)
+                .body("size", equalTo(1));
     }
 }

@@ -43,4 +43,13 @@ public class LibraryResource {
         LibraryItemDTO resultDTO = userFacade.addBook(username, itemDTO);
         return GSON.toJson(resultDTO);
     }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("get")
+    @RolesAllowed("user")
+    public String getLibrary() {
+        String username = securityContext.getUserPrincipal().getName();
+        return GSON.toJson(userFacade.getLibrary(username));
+    }
 }
