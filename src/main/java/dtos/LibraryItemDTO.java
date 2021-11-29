@@ -1,21 +1,20 @@
 package dtos;
 
 import entities.LibraryItem;
-import entities.Role;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LibraryItemDTO {
 
-    private String id;
+    private String bookKey;
 
-    public LibraryItemDTO(String id) {
-        this.id = id;
+    public LibraryItemDTO(String bookKey) {
+        this.bookKey = bookKey;
     }
 
     public LibraryItemDTO(LibraryItem entity) {
-        this.id = entity.getId();
+        this.bookKey = entity.getBookKey();
     }
 
     public static List<LibraryItemDTO> getDTOs(List<LibraryItem> entities) {
@@ -24,7 +23,7 @@ public class LibraryItemDTO {
         return dtos;
     }
 
-    public String getId() {
-        return id;
+    public String getBookKey() {
+        return bookKey;
     }
 }

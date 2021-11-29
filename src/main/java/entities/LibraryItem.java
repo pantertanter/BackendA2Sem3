@@ -8,37 +8,33 @@ import javax.persistence.*;
 @Entity
 public class LibraryItem {
     @Id
-    @Column(name = "id", nullable = false, length = 16)
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "library_item_id", nullable = false)
+    private Integer id;
 
-    @JoinColumn(name = "user")
-    @ManyToOne
-    private User user;
+    @Column(name = "book_key", nullable = false, length = 16)
+    private String bookKey;
 
     public LibraryItem() {
     }
 
-    public LibraryItem(String id) {
-        this.id = id;
-    }
-
     public LibraryItem(LibraryItemDTO dto) {
-        this.id = dto.getId();
+        this.bookKey = dto.getBookKey();
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public User getUser() {
-        return user;
+    public String getBookKey() {
+        return bookKey;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setBookKey(String bookKey) {
+        this.bookKey = bookKey;
     }
 }

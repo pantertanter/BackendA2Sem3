@@ -67,7 +67,7 @@ class UserFacadeTest {
 
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, u1.getUserName());
-        assertEquals(item.getId(), user.getLibraryItems().get(0).getId());
+        assertEquals(item.getBookKey(), user.getLibraryItems().get(0).getBookKey());
         em.close();
     }
 }

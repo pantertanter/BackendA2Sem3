@@ -29,10 +29,21 @@ public class User implements Serializable {
   @ManyToMany
   private List<Role> roleList = new ArrayList<>();
 
-  @OneToMany(mappedBy = "user", cascade = {
+  @OneToMany(cascade = {
           CascadeType.PERSIST,
           CascadeType.MERGE
   })
+  @JoinTable(
+          name = "user_library",
+          joinColumns = {@JoinColumn(
+                  name = "user",
+                  referencedColumnName = "user_name"
+          )},
+          inverseJoinColumns = {@JoinColumn(
+                  name = "library_item_id",
+                  referencedColumnName = "library_item_id"
+          )}
+  )
   private List<LibraryItem> libraryItems = new ArrayList<>();
 
   public List<String> getRolesAsStrings() {
@@ -94,7 +105,6 @@ public class User implements Serializable {
   public void addToLibrary(LibraryItem item) {
     if (item != null) {
       libraryItems.add(item);
-      item.setUser(this);
     }
   }
 
