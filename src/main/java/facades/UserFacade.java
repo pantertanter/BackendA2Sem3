@@ -7,6 +7,8 @@ import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.ws.rs.WebApplicationException;
 
 import security.errorhandling.AuthenticationException;
@@ -86,6 +88,12 @@ public class UserFacade {
         finally {
             em.close();
         }
+    }
+
+    public List<LibraryItemDTO> getLibrary(String username) {
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, username);
+        return LibraryItemDTO.getDTOs(user.getLibraryItems());
     }
 
     public static void main(String[] args) {

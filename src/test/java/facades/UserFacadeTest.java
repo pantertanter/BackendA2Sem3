@@ -71,4 +71,12 @@ class UserFacadeTest {
         assertEquals(item.getBookKey(), user.getLibraryItems().get(0).getBookKey());
         em.close();
     }
+
+    @Test
+    void getLibrary() {
+        assertEquals(0, facade.getLibrary(u1.getUserName()).size());
+        LibraryItemDTO item = new LibraryItemDTO("OL679360W");
+        facade.addBook(u1.getUserName(), item);
+        assertEquals(1, facade.getLibrary(u1.getUserName()).size());
+    }
 }
