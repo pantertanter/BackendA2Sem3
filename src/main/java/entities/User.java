@@ -3,14 +3,7 @@ package entities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import org.mindrot.jbcrypt.BCrypt;
@@ -35,6 +28,12 @@ public class User implements Serializable {
     @JoinColumn(name = "role_name", referencedColumnName = "role_name")})
   @ManyToMany
   private List<Role> roleList = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", cascade = {
+          CascadeType.PERSIST,
+          CascadeType.MERGE
+  })
+  private List<LibraryItem> libraryItems = new ArrayList<>();
 
   public List<String> getRolesAsStrings() {
     if (roleList.isEmpty()) {
@@ -86,6 +85,17 @@ public class User implements Serializable {
 
   public void addRole(Role userRole) {
     roleList.add(userRole);
+  }
+
+  public List<LibraryItem> getLibraryItems() {
+    return libraryItems;
+  }
+
+  public void addToLibrary(LibraryItem item) {
+    if (item != null) {
+      libraryItems.add(item);
+      item.setUser(this);
+    }
   }
 
 }

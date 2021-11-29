@@ -1,11 +1,12 @@
 package facades;
 
+import dtos.LibraryItemDTO;
 import dtos.UserDTO;
+import entities.LibraryItem;
 import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.TypedQuery;
 import javax.ws.rs.WebApplicationException;
 
 import security.errorhandling.AuthenticationException;
@@ -64,6 +65,17 @@ public class UserFacade {
         em.persist(user);
         em.getTransaction().commit();
         return new UserDTO(user);
+    }
+
+    public List<LibraryItemDTO> addBook(String username, LibraryItemDTO itemDTO) {
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, username);
+        LibraryItem itemEntity = new LibraryItem(itemDTO);
+        user.addToLibrary(itemEntity);
+        em.getTransaction().begin();
+        em.merge(user);
+        em.getTransaction().commit();
+        return LibraryItemDTO.getDTOs(user.getLibraryItems());
     }
 
     public static void main(String[] args) {
