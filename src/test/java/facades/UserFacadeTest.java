@@ -49,10 +49,11 @@ class UserFacadeTest {
 
         try {
             em.getTransaction().begin();
-            em.createNativeQuery("DROP TABLE library_item");
-            em.createNativeQuery("DROP TABLE user_roles");
-            em.createNativeQuery("DROP TABLE users");
-            em.createNativeQuery("DROP TABLE roles");
+            em.createNativeQuery("DELETE FROM user_roles").executeUpdate();
+            em.createNativeQuery("DELETE FROM roles").executeUpdate();
+            em.createNativeQuery("DELETE FROM user_library").executeUpdate();
+            em.createNativeQuery("DELETE FROM users").executeUpdate();
+            em.createNativeQuery("DELETE FROM library_item").executeUpdate();
             em.getTransaction().commit();
         }
         finally {
