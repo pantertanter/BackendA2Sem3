@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.AuthorDTO;
 import dtos.BookSearchResultsDTO;
 import facades.SearchFacade;
 import utils.EMF_Creator;
@@ -30,6 +31,14 @@ public class SearchResource {
     public String searchBasic(@PathParam("search") String search) throws IOException {
         /* TODO: Maybe add pagination parameters to the endpoint. Limit is currently in SearchFacade*/
         BookSearchResultsDTO result = searchFacade.getBookSearchResult(search);
+        return GSON.toJson(result);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("author/{id}")
+    public String getAuthor(@PathParam("id") String id) throws IOException {
+        AuthorDTO result = searchFacade.getAuthor(id);
         return GSON.toJson(result);
     }
 }
