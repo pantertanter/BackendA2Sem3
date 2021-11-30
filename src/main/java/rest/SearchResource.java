@@ -28,8 +28,8 @@ public class SearchResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{search}")
-    public String searchBasic(@PathParam("search") String search) throws IOException {
-        /* TODO: Maybe add pagination parameters to the endpoint. Limit is currently in SearchFacade*/
+    public String searchBasic(@PathParam("search") @Encoded String search) throws IOException {
+        /* TODO: Maybe add pagination parameters to the endpoint. */
         int limit = 25;
         BookSearchResultsDTO result = searchFacade.getBookSearchResult(search, limit);
         return GSON.toJson(result);
