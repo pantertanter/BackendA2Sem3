@@ -33,8 +33,9 @@ public class SearchFacade {
 
         search = search.replace(' ',  '+');
         String baseUrl = "https://openlibrary.org";
+        String fields = "&fields=title,first_publish_year,number_of_pages_median,cover_i,subject_key,subject_facet,author_key,author_name,key";
         int limit = 25;
-        String url = baseUrl + "/search.json?q=" + search + "&limit=" + limit;
+        String url = baseUrl + "/search.json?q=" + search + fields + "&limit=" + limit;
         String json = HttpUtils.fetch(url);
         return bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
     }
@@ -61,5 +62,13 @@ public class SearchFacade {
             urls.add(baseUrl + "-L.jpg");
         }
         return urls;
+    }
+
+    public static void main(String[] args) throws IOException {
+        SearchFacade sf = getSearchFacade();
+        long start = System.currentTimeMillis();
+        sf.getBookSearchResult("Dan Brown");
+        long end = System.currentTimeMillis();
+        System.out.println(end-start);
     }
 }
