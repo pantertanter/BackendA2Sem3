@@ -5,6 +5,7 @@ import dtos.AuthorDTO;
 import dtos.BookDTO;
 import dtos.SubjectDTO;
 import facades.SearchFacade;
+import utils.JsonUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -17,67 +18,20 @@ public class BookDTODeserializerFromSearchResult implements JsonDeserializer<Boo
     @Override
     public BookDTO deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        String title = jsonObject.get("title").getAsString();
 
-        // It's extremely tiresome having to check if every value exists.
-        // An easier solution is to just pass on the JsonElement
-        // Or write helper methods to check if an Element with a type exists and return the value.
-        // this will desperately need a refactor
-        // TODO: refactor
-
-        // same as below
-        int first_publish_year = 0;
-        JsonElement firstPublishYearElement = jsonObject.get("first_publish_year");
-        if (firstPublishYearElement != null && !firstPublishYearElement.isJsonNull()) {
-            first_publish_year = firstPublishYearElement.getAsInt();
-        }
-
-        // not very useful to show a page count of 0.
-        // Consider making it an Integer, so you can nullify it, or a String with a default value if 0.
-        int number_of_pages_median = 0;
-        JsonElement medianPagesElement = jsonObject.get("number_of_pages_median");
-        if (medianPagesElement != null && !medianPagesElement.isJsonNull()) {
-            number_of_pages_median = medianPagesElement.getAsInt();
-        }
-
-        // same deal as above, except returning an empty List does make sense
-        int coverId = 0;
-        JsonElement coverIdElement = jsonObject.get("cover_i");
-        if (coverIdElement != null && !coverIdElement.isJsonNull()) {
-            coverId = coverIdElement.getAsInt();
-        }
+        String title = JsonUtils.getString(jsonObject.get("title"));
+        int first_publish_year = JsonUtils.getInt(jsonObject.get("first_publish_year"));
+        int number_of_pages_median = JsonUtils.getInt(jsonObject.get("number_of_pages_median"));
+        int coverId = JsonUtils.getInt(jsonObject.get("cover_i"));
         List<String> thumbnail_urls = searchFacade.getCoverUrlsById(coverId);
 
-        JsonArray subjectKeys = null;
-        JsonElement subjectKeysElement = jsonObject.get("subject_key");
-        if (subjectKeysElement != null && !subjectKeysElement.isJsonNull()) {
-            subjectKeys = subjectKeysElement.getAsJsonArray();
-        }
-        JsonArray subjectNames = null;
-        JsonElement subjectNamesElement = jsonObject.get("subject_facet");
-        if (subjectNamesElement != null && !subjectNamesElement.isJsonNull()) {
-            subjectNames = subjectNamesElement.getAsJsonArray();
-        }
-        List<SubjectDTO> subjects = new ArrayList<>();
-        if (subjectKeys != null && subjectNames != null) {
-            subjects.addAll(getSubjects(subjectKeys, subjectNames));
-        }
+        List<String> subjectKeys = JsonUtils.getStringList(jsonObject.get("subject_key"));
+        List<String> subjectNames = JsonUtils.getStringList(jsonObject.get("subject_facet"));
+        List<SubjectDTO> subjects = getSubjects(subjectKeys, subjectNames);
 
-
-        JsonArray authorKeys = null;
-        JsonElement authorKeysElement = jsonObject.get("author_key");
-        if (authorKeysElement != null && !authorKeysElement.isJsonNull()) {
-            authorKeys = authorKeysElement.getAsJsonArray();
-        }
-        JsonArray authorNames = null;
-        JsonElement authorNamesElement = jsonObject.get("author_name");
-        if (authorNamesElement != null && !authorNamesElement.isJsonNull()) {
-            authorNames = authorNamesElement.getAsJsonArray();
-        }
-        List<AuthorDTO> authors = new ArrayList<>();
-        if (authorKeys != null && authorNames != null) {
-            authors.addAll(getAuthors(authorKeys, authorNames));
-        }
+        List<String> authorKeys = JsonUtils.getStringList(jsonObject.get("author_key"));
+        List<String> authorNames = JsonUtils.getStringList(jsonObject.get("author_name"));
+        List<AuthorDTO> authors = getAuthors(authorKeys, authorNames);
 
         String[] workKeyArray = jsonObject.get("key").getAsString().split("/");
         String workKey = workKeyArray[workKeyArray.length-1];
@@ -104,18 +58,18 @@ public class BookDTODeserializerFromSearchResult implements JsonDeserializer<Boo
     //  So are the facets but lowercase are sorted last which desyncs the list.
     //  The list called "subjects" is not sorted at all so it won't match the keys.
     //  You might have to just omit the key and search by name later.
-    private List<SubjectDTO> getSubjects(JsonArray keys, JsonArray names) {
+    private List<SubjectDTO> getSubjects(List<String> keys, List<String> names) {
         List<SubjectDTO> subjects = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++) {
-            subjects.add(new SubjectDTO(keys.get(i).getAsString(), names.get(i).getAsString()));
+            subjects.add(new SubjectDTO(keys.get(i), names.get(i)));
         }
         return subjects;
     }
 
-    private List<AuthorDTO> getAuthors(JsonArray keys, JsonArray names) {
+    private List<AuthorDTO> getAuthors(List<String> keys, List<String> names) {
         List<AuthorDTO> authors = new ArrayList<>();
         for (int i = 0; i < keys.size(); i++) {
-            authors.add(new AuthorDTO(keys.get(i).getAsString(), names.get(i).getAsString()));
+            authors.add(new AuthorDTO(keys.get(i), names.get(i)));
         }
         return authors;
     }
