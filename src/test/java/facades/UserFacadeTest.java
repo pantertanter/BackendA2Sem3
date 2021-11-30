@@ -12,6 +12,9 @@ import utils.EMF_Creator;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserFacadeTest {
@@ -73,10 +76,10 @@ class UserFacadeTest {
     }
 
     @Test
-    void getLibrary() {
-        assertEquals(0, facade.getLibrary(u1.getUserName()).size());
+    void getLibrary() throws IOException, ExecutionException, InterruptedException {
+        assertEquals(0, facade.getLibrary(u1.getUserName()).getSize());
         LibraryItemDTO item = new LibraryItemDTO("OL679360W");
         facade.addBook(u1.getUserName(), item);
-        assertEquals(1, facade.getLibrary(u1.getUserName()).size());
+        assertEquals(1, facade.getLibrary(u1.getUserName()).getSize());
     }
 }

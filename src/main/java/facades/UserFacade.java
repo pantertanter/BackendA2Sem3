@@ -1,20 +1,22 @@
 package facades;
 
+import dtos.LibraryDTO;
 import dtos.LibraryItemDTO;
+import dtos.LibraryItemWithBookDTO;
 import dtos.UserDTO;
 import entities.LibraryItem;
 import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import javax.ws.rs.WebApplicationException;
 
 import security.errorhandling.AuthenticationException;
 import utils.EMF_Creator;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @author lam@cphbusiness.dk
@@ -90,10 +92,13 @@ public class UserFacade {
         }
     }
 
-    public List<LibraryItemDTO> getLibrary(String username) {
+    public LibraryDTO getLibrary(String username) throws IOException, ExecutionException, InterruptedException {
+        SearchFacade sf = SearchFacade.getSearchFacade();
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, username);
-        return LibraryItemDTO.getDTOs(user.getLibraryItems());
+        List<LibraryItemDTO> itemDTOS = LibraryItemDTO.getDTOs(user.getLibraryItems());
+        List<LibraryItemWithBookDTO> itemsWithBooks = sf.getLibraryItemsWithBooks(itemDTOS);
+        return new LibraryDTO(username, itemsWithBooks);
     }
 
     public static void main(String[] args) {

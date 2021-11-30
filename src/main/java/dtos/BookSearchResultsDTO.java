@@ -20,4 +20,8 @@ public class BookSearchResultsDTO {
         this.query = query;
         this.results = results;
     }
+
+    public List<BookDTO> getResults() {
+        return results;
+    }
 }
