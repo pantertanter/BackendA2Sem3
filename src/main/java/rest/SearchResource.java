@@ -30,7 +30,8 @@ public class SearchResource {
     @Path("{search}")
     public String searchBasic(@PathParam("search") String search) throws IOException {
         /* TODO: Maybe add pagination parameters to the endpoint. Limit is currently in SearchFacade*/
-        BookSearchResultsDTO result = searchFacade.getBookSearchResult(search);
+        int limit = 25;
+        BookSearchResultsDTO result = searchFacade.getBookSearchResult(search, limit);
         return GSON.toJson(result);
     }
 
