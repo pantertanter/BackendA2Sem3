@@ -56,4 +56,14 @@ public class LibraryResource {
         LibraryDTO res = userFacade.getLibrary(username);
         return GSON.toJson(res);
     }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("delete/{key}")
+    @RolesAllowed("user")
+    public String deleteBook(@PathParam("key") String key) {
+        String username = securityContext.getUserPrincipal().getName();
+        LibraryItemDTO res = userFacade.deleteBook(username, key);
+        return GSON.toJson(res);
+    }
 }

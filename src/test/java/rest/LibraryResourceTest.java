@@ -179,4 +179,18 @@ class LibraryResourceTest {
                 .statusCode(200)
                 .body("size", equalTo(1));
     }
+
+    @Test
+    void deleteBook() {
+        login("user", "test");
+        String bookKey = "OL679360W";
+        given()
+                .accept(MediaType.APPLICATION_JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .delete("/library/delete/" + bookKey)
+                .then()
+                .statusCode(200)
+                .body("bookKey", equalTo(bookKey));
+    }
 }
