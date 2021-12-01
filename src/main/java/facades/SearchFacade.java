@@ -32,7 +32,6 @@ public class SearchFacade {
                 .create();
 
         search = search.replace(' ',  '+');
-        search = search.replace("&filter=none",  "");
         String baseUrl = "https://openlibrary.org";
         int limit = 25;
         String url = baseUrl + "/search.json?q=" + search + "&limit=" + limit;
