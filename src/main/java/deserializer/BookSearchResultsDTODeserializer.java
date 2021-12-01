@@ -3,6 +3,7 @@ package deserializer;
 import com.google.gson.*;
 import dtos.BookDTO;
 import dtos.BookSearchResultsDTO;
+import utils.JsonUtils;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -12,16 +13,10 @@ public class BookSearchResultsDTODeserializer implements JsonDeserializer<BookSe
     @Override
     public BookSearchResultsDTO deserialize(JsonElement jsonElement, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
         JsonObject jsonObject = jsonElement.getAsJsonObject();
-        int numFound = jsonObject.get("numFound").getAsInt();
-        int start = jsonObject.get("start").getAsInt();
-
-        int offset = 0;
-        JsonElement offsetElement = jsonObject.get("offset");
-        if (!offsetElement.isJsonNull()) {
-            offset = offsetElement.getAsInt();
-        }
-
-        String query = jsonObject.get("q").getAsString();
+        int numFound = JsonUtils.getInt(jsonObject.get("numFound"));
+        int start = JsonUtils.getInt(jsonObject.get("start"));
+        int offset = JsonUtils.getInt(jsonObject.get("offset"));
+        String query = JsonUtils.getString(jsonObject.get("q"));
 
         JsonArray docs = jsonObject.get("docs").getAsJsonArray();
         List<BookDTO> results = new ArrayList<>();

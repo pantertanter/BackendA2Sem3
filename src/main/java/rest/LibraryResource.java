@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dtos.LibraryDTO;
 import dtos.LibraryItemDTO;
 import facades.UserFacade;
 import utils.EMF_Creator;
@@ -13,6 +14,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
+import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 @Path("library")
 public class LibraryResource {
@@ -48,8 +51,9 @@ public class LibraryResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("get")
     @RolesAllowed("user")
-    public String getLibrary() {
+    public String getLibrary() throws IOException, ExecutionException, InterruptedException {
         String username = securityContext.getUserPrincipal().getName();
-        return GSON.toJson(userFacade.getLibrary(username));
+        LibraryDTO res = userFacade.getLibrary(username);
+        return GSON.toJson(res);
     }
 }
