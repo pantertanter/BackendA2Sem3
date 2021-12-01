@@ -9,6 +9,8 @@ import entities.Role;
 import entities.User;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.ws.rs.WebApplicationException;
 
 import security.errorhandling.AuthenticationException;
@@ -99,6 +101,31 @@ public class UserFacade {
         List<LibraryItemDTO> itemDTOS = LibraryItemDTO.getDTOs(user.getLibraryItems());
         List<LibraryItemWithBookDTO> itemsWithBooks = sf.getLibraryItemsWithBooks(itemDTOS);
         return new LibraryDTO(username, itemsWithBooks);
+    }
+
+    // this will be easier when I refactor the database
+    public LibraryItemDTO deleteBook(String username, String key) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            User user = em.find(User.class, username);
+            LibraryItem item = null;
+            for (LibraryItem li : user.getLibraryItems()) {
+                if (li.getBookKey().equals(key)) {
+                    item = li;
+                    break;
+                }
+            }
+            if (item == null) {
+                throw new WebApplicationException("Item not found in your library", 404);
+            }
+            em.getTransaction().begin();
+            user.removeFromLibrary(item);
+            em.getTransaction().commit();
+            return new LibraryItemDTO(item);
+        }
+        finally {
+            em.close();
+        }
     }
 
     public static void main(String[] args) {
