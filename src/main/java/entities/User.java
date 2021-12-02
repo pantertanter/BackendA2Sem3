@@ -29,7 +29,8 @@ public class User implements Serializable {
   @ManyToMany
   private List<Role> roleList = new ArrayList<>();
 
-  @OneToMany(cascade = {
+  @OneToMany(orphanRemoval = true,
+          cascade = {
           CascadeType.PERSIST,
           CascadeType.MERGE
   })
@@ -105,6 +106,12 @@ public class User implements Serializable {
   public void addToLibrary(LibraryItem item) {
     if (item != null) {
       libraryItems.add(item);
+    }
+  }
+
+  public void removeFromLibrary(LibraryItem item) {
+    if (item != null) {
+      libraryItems.remove(item);
     }
   }
 

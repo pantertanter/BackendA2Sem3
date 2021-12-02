@@ -56,4 +56,30 @@ public class LibraryResource {
         LibraryDTO res = userFacade.getLibrary(username);
         return GSON.toJson(res);
     }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("edit/{key}")
+    @RolesAllowed("user")
+    public String updateBook(@PathParam("key") String key, String jsonString) {
+        String username = securityContext.getUserPrincipal().getName();
+        LibraryItemDTO itemDTO = GSON.fromJson(jsonString, LibraryItemDTO.class);
+        // it's unnecessary to even have the URL key, so we could get rid of it.
+        if (!itemDTO.getBookKey().equals(key)) {
+            throw new WebApplicationException("Key in URL and in JSON object don't match", 400);
+        }
+        LibraryItemDTO resultDTO = userFacade.updateBook(username, itemDTO);
+        return GSON.toJson(resultDTO);
+    }
+
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("delete/{key}")
+    @RolesAllowed("user")
+    public String deleteBook(@PathParam("key") String key) {
+        String username = securityContext.getUserPrincipal().getName();
+        LibraryItemDTO res = userFacade.deleteBook(username, key);
+        return GSON.toJson(res);
+    }
 }

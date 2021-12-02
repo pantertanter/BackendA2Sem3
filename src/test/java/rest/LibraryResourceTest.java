@@ -1,5 +1,6 @@
 package rest;
 
+import dtos.LibraryItemDTO;
 import entities.LibraryItem;
 import entities.Role;
 import entities.User;
@@ -178,5 +179,37 @@ class LibraryResourceTest {
                 .then()
                 .statusCode(200)
                 .body("size", equalTo(1));
+    }
+
+    @Test
+    void updateBook() {
+        login("user", "test");
+        String bookKey = "OL679360W";
+        LibraryItemDTO item = new LibraryItemDTO(bookKey,"READING", 4);
+        given()
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("x-access-token", securityToken)
+                .body(item)
+                .when()
+                .put("/library/edit/" + bookKey)
+                .then()
+                .statusCode(200)
+                .body("status", equalTo("READING"))
+                .body("rating", equalTo(4));
+    }
+
+    @Test
+    void deleteBook() {
+        login("user", "test");
+        String bookKey = "OL679360W";
+        given()
+                .accept(MediaType.APPLICATION_JSON)
+                .header("x-access-token", securityToken)
+                .when()
+                .delete("/library/delete/" + bookKey)
+                .then()
+                .statusCode(200)
+                .body("bookKey", equalTo(bookKey));
     }
 }

@@ -101,6 +101,58 @@ public class UserFacade {
         return new LibraryDTO(username, itemsWithBooks);
     }
 
+    // would be easier if database was refactored
+    public LibraryItemDTO updateBook(String username, LibraryItemDTO itemDTO) {
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, username);
+        LibraryItem newItem = new LibraryItem(itemDTO);
+        LibraryItem oldItem = null;
+        for (LibraryItem li : user.getLibraryItems()) {
+            if (li.getBookKey().equals(itemDTO.getBookKey())) {
+                oldItem = li;
+                break;
+            }
+        }
+        if (oldItem == null) {
+            throw new WebApplicationException("Item not found in your library", 404);
+        }
+        newItem.setId(oldItem.getId());
+        try {
+            em.getTransaction().begin();
+            em.merge(newItem);
+            em.getTransaction().commit();
+            return new LibraryItemDTO(newItem);
+        }
+        finally {
+            em.close();
+        }
+    }
+
+    // this will be easier when I refactor the database
+    public LibraryItemDTO deleteBook(String username, String key) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            User user = em.find(User.class, username);
+            LibraryItem item = null;
+            for (LibraryItem li : user.getLibraryItems()) {
+                if (li.getBookKey().equals(key)) {
+                    item = li;
+                    break;
+                }
+            }
+            if (item == null) {
+                throw new WebApplicationException("Item not found in your library", 404);
+            }
+            em.getTransaction().begin();
+            user.removeFromLibrary(item);
+            em.getTransaction().commit();
+            return new LibraryItemDTO(item);
+        }
+        finally {
+            em.close();
+        }
+    }
+
     public static void main(String[] args) {
         EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
         UserFacade uf = UserFacade.getUserFacade(emf);
