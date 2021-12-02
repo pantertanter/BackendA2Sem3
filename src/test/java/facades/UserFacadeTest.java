@@ -92,6 +92,28 @@ class UserFacadeTest {
     }
 
     @Test
+    void updateBook() {
+        assertEquals("TO-READ", li1.getStatus());
+        LibraryItemDTO newItem = new LibraryItemDTO("OL679360W", "READING");
+        facade.updateBook(u2.getUserName(), newItem);
+
+        EntityManager em = emf.createEntityManager();
+        User user = em.find(User.class, u2.getUserName());
+        assertEquals(newItem.getStatus(), user.getLibraryItems().get(0).getStatus());
+    }
+
+    @Test
+    void updateBook_badKey() {
+        assertEquals("TO-READ", li1.getStatus());
+        LibraryItemDTO newItem = new LibraryItemDTO("badKey", "READING");
+        WebApplicationException e = assertThrows(WebApplicationException.class, () -> {
+            facade.updateBook(u2.getUserName(), newItem);
+        });
+        assertEquals(404, e.getResponse().getStatus());
+        assertEquals("Item not found in your library", e.getMessage());
+    }
+
+    @Test
     void deleteBook() throws IOException, ExecutionException, InterruptedException {
         assertEquals(1, facade.getLibrary(u2.getUserName()).getSize());
         facade.deleteBook(u2.getUserName(), li1.getBookKey());
