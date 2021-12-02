@@ -94,18 +94,19 @@ class UserFacadeTest {
     @Test
     void updateBook() {
         assertEquals("TO-READ", li1.getStatus());
-        LibraryItemDTO newItem = new LibraryItemDTO("OL679360W", "READING");
+        LibraryItemDTO newItem = new LibraryItemDTO("OL679360W", "READING", 4);
         facade.updateBook(u2.getUserName(), newItem);
 
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, u2.getUserName());
         assertEquals(newItem.getStatus(), user.getLibraryItems().get(0).getStatus());
+        assertEquals(newItem.getRating(), user.getLibraryItems().get(0).getRating());
     }
 
     @Test
     void updateBook_badKey() {
         assertEquals("TO-READ", li1.getStatus());
-        LibraryItemDTO newItem = new LibraryItemDTO("badKey", "READING");
+        LibraryItemDTO newItem = new LibraryItemDTO("badKey", "READING", 4);
         WebApplicationException e = assertThrows(WebApplicationException.class, () -> {
             facade.updateBook(u2.getUserName(), newItem);
         });

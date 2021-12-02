@@ -185,7 +185,7 @@ class LibraryResourceTest {
     void updateBook() {
         login("user", "test");
         String bookKey = "OL679360W";
-        LibraryItemDTO item = new LibraryItemDTO(bookKey,"READING");
+        LibraryItemDTO item = new LibraryItemDTO(bookKey,"READING", 4);
         given()
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -195,7 +195,8 @@ class LibraryResourceTest {
                 .put("/library/edit/" + bookKey)
                 .then()
                 .statusCode(200)
-                .body("status", equalTo("READING"));
+                .body("status", equalTo("READING"))
+                .body("rating", equalTo(4));
     }
 
     @Test

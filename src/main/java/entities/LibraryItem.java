@@ -18,22 +18,28 @@ public class LibraryItem {
     @Column(name = "status", nullable = false, length = 16)
     private String status;
 
+    @Column(name = "rating", nullable = false)
+    private int rating;
+
     public LibraryItem() {
     }
 
     public LibraryItem(String bookKey) {
         this.bookKey = bookKey;
         this.status = "TO-READ";
+        this.rating = 0;
     }
 
-    public LibraryItem(String bookKey, String status) {
+    public LibraryItem(String bookKey, String status, int rating) {
         this.bookKey = bookKey;
         this.status = status;
+        this.rating = rating;
     }
 
     public LibraryItem(LibraryItemDTO dto) {
         this.bookKey = dto.getBookKey();
         this.status = dto.getStatus();
+        this.rating = dto.getRating();
     }
 
     public Integer getId() {
@@ -54,5 +60,9 @@ public class LibraryItem {
 
     public String getStatus() {
         return status;
+    }
+
+    public int getRating() {
+        return rating;
     }
 }
