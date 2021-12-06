@@ -32,7 +32,7 @@ public class SearchFacade {
         return instance;
     }
 
-    public BookSearchResultsDTO getBookSearchResult(String search, int limit) throws IOException {
+    public BookSearchResultsDTO getBookSearchResult(String search, int limit, int offset) throws IOException {
         // we could have a singleton Gson with all deserializers registered.
         Gson bookSearchResultGson = new GsonBuilder()
                 .registerTypeAdapter(BookSearchResultsDTO.class, new BookSearchResultsDTODeserializer())
@@ -41,9 +41,11 @@ public class SearchFacade {
         search = search.replace(' ',  '+');
         String baseUrl = "https://openlibrary.org";
         String fields = "&fields=title,first_publish_year,number_of_pages_median,cover_i,subject_key,subject_facet,author_key,author_name,key";
-        String url = baseUrl + "/search.json?q=" + search + fields + "&limit=" + limit;
+        String url = baseUrl + "/search.json?q=" + search + fields + "&limit=" + limit + "&offset=" + offset;
         String json = HttpUtils.fetch(url);
-        return bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
+        BookSearchResultsDTO resultsDTO = bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
+        resultsDTO.setLimit(limit);
+        return resultsDTO;
     }
 
     // This method is big and does multiple things.
@@ -146,7 +148,7 @@ public class SearchFacade {
     public static void main(String[] args) throws IOException {
         SearchFacade sf = getSearchFacade();
         long start = System.currentTimeMillis();
-        sf.getBookSearchResult("Dan Brown", 25);
+        sf.getBookSearchResult("Dan Brown", 25, 0);
         long end = System.currentTimeMillis();
         System.out.println(end-start);
     }

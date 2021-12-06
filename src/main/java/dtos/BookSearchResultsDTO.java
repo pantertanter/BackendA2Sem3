@@ -4,6 +4,7 @@ import java.util.List;
 
 public class BookSearchResultsDTO {
     int numFound;
+    int limit;
     int start;
     int offset;
     String query;
@@ -23,5 +24,9 @@ public class BookSearchResultsDTO {
 
     public List<BookDTO> getResults() {
         return results;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }
