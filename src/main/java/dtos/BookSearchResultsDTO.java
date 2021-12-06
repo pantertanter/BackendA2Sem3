@@ -3,12 +3,13 @@ package dtos;
 import java.util.List;
 
 public class BookSearchResultsDTO {
-    int numFound;
-    int start;
-    int offset;
-    String query;
+    private int numFound;
+    private int limit;
+    private int start;
+    private int offset;
+    private String query;
     // this can be refactored into a SearchResultDTO (singular) if we want.
-    List<BookDTO> results;
+    private List<BookDTO> results;
 
     public BookSearchResultsDTO() {
     }
@@ -23,5 +24,9 @@ public class BookSearchResultsDTO {
 
     public List<BookDTO> getResults() {
         return results;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 }

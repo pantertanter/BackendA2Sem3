@@ -38,4 +38,29 @@ public class JsonUtils {
         }
         return list;
     }
+
+    public static List<JsonElement> getElementList(JsonElement je) {
+        JsonArray array = je != null && je.isJsonArray() ? je.getAsJsonArray() : null;
+        List<JsonElement> list = new ArrayList<>();
+        if (array != null) {
+            array.forEach(list::add);
+        }
+        return list;
+    }
+
+    // specific to OpenLibrary
+    public static String getDescription(JsonElement je) {
+        String defaultValue = "";
+        if (je != null) {
+            if (je.isJsonPrimitive()) {
+                return getString(je);
+            }
+            else {
+                return getString(je.getAsJsonObject().get("value"));
+            }
+        }
+        return defaultValue;
+    }
+
+    // could add getLinks as it will be copy-pasted from Work to Author.
 }

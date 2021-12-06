@@ -1,12 +1,14 @@
 package facades;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import deserializer.BookDTODeserializerFromSearchResult;
+import com.google.gson.*;
+import deserializer.BookDetailsEditionDeserializer;
+import deserializer.BookDetailsWorkDeserializer;
 import deserializer.BookSearchResultsDTODeserializer;
 import dtos.*;
 import utils.HttpUtils;
+import utils.JsonUtils;
 
+import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +16,11 @@ import java.util.concurrent.ExecutionException;
 
 public class SearchFacade {
     private static SearchFacade instance;
+    private static final Gson bigGson = new GsonBuilder()
+            .registerTypeAdapter(BookSearchResultsDTO.class, new BookSearchResultsDTODeserializer())
+            .registerTypeAdapter(BookDetailsWorkDTO.class, new BookDetailsWorkDeserializer())
+            .registerTypeAdapter(BookDetailsEditionDTO.class, new BookDetailsEditionDeserializer())
+            .create();
 
     private SearchFacade() {
     }
@@ -25,7 +32,7 @@ public class SearchFacade {
         return instance;
     }
 
-    public BookSearchResultsDTO getBookSearchResult(String search, int limit) throws IOException {
+    public BookSearchResultsDTO getBookSearchResult(String search, int limit, int offset) throws IOException {
         // we could have a singleton Gson with all deserializers registered.
         Gson bookSearchResultGson = new GsonBuilder()
                 .registerTypeAdapter(BookSearchResultsDTO.class, new BookSearchResultsDTODeserializer())
@@ -34,9 +41,11 @@ public class SearchFacade {
         search = search.replace(' ',  '+');
         String baseUrl = "https://openlibrary.org";
         String fields = "&fields=title,first_publish_year,number_of_pages_median,cover_i,subject_key,subject_facet,author_key,author_name,key";
-        String url = baseUrl + "/search.json?q=" + search + fields + "&limit=" + limit;
+        String url = baseUrl + "/search.json?q=" + search + fields + "&limit=" + limit + "&offset=" + offset;
         String json = HttpUtils.fetch(url);
-        return bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
+        BookSearchResultsDTO resultsDTO = bookSearchResultGson.fromJson(json, BookSearchResultsDTO.class);
+        resultsDTO.setLimit(limit);
+        return resultsDTO;
     }
 
     // This method is big and does multiple things.
@@ -66,13 +75,50 @@ public class SearchFacade {
         List<LibraryItemWithBookDTO> itemsWithBooks = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
             BookSearchResultsDTO searchResult = bookSearchResultGson.fromJson(jsonBooks.get(i), BookSearchResultsDTO.class);
-            BookDTO book = searchResult.getResults().size() > 0 ? searchResult.getResults().get(0) : null;
+            BookDTO book = !searchResult.getResults().isEmpty() ? searchResult.getResults().get(0) : null;
             itemsWithBooks.add(new LibraryItemWithBookDTO(
                     items.get(i),
                     book)
             );
         }
         return itemsWithBooks;
+    }
+
+    public BookDetailsWorkDTO getWork(String key) throws IOException {
+        String url = "https://openlibrary.org/works/" + key + ".json" ;
+        String json = HttpUtils.fetch(url);
+        return bigGson.fromJson(json, BookDetailsWorkDTO.class);
+    }
+
+    public BookDetailsEditionDTO getEdition(String key) throws IOException {
+        String url = "https://openlibrary.org/books/" + key + ".json";
+        String json = HttpUtils.fetch(url);
+        return bigGson.fromJson(json, BookDetailsEditionDTO.class);
+    }
+
+    public BookWithDetailsDTO getBookDetails(String key) throws IOException {
+        String baseUrl = "https://openlibrary.org/search.json?";
+        String baseQuery = "q=key:/works/";
+        String fields = "&fields=title,first_publish_year,number_of_pages_median,cover_edition_key,cover_i,subject_key,subject_facet,author_key,author_name,key";
+        String limit = "&limit=1";
+        String url = baseUrl + baseQuery + key + fields + limit;
+
+        String fetched = HttpUtils.fetch(url);
+
+        JsonElement jsonElement= JsonParser.parseString(fetched);
+        JsonArray jsonSearchResults = jsonElement.getAsJsonObject().getAsJsonArray("docs");
+        if (jsonSearchResults.size() == 0) {
+            throw new WebApplicationException("Book not found with this ID", 404);
+        }
+        String editionKey = JsonUtils.getString(jsonSearchResults.get(0).getAsJsonObject().get("cover_edition_key"));
+
+        BookSearchResultsDTO bookSearchResults = bigGson.fromJson(jsonElement, BookSearchResultsDTO.class);
+        BookDTO book = bookSearchResults.getResults().get(0);
+        BookDetailsWorkDTO work = getWork(key);
+        // if no editionKey was present, initialise a DTO with default values
+        BookDetailsEditionDTO edition = !editionKey.isEmpty() ? getEdition(editionKey) : new BookDetailsEditionDTO();
+
+        return new BookWithDetailsDTO(book, work, edition);
     }
 
     public AuthorDTO getAuthor(String id) throws IOException {
@@ -102,7 +148,7 @@ public class SearchFacade {
     public static void main(String[] args) throws IOException {
         SearchFacade sf = getSearchFacade();
         long start = System.currentTimeMillis();
-        sf.getBookSearchResult("Dan Brown", 25);
+        sf.getBookSearchResult("Dan Brown", 25, 0);
         long end = System.currentTimeMillis();
         System.out.println(end-start);
     }

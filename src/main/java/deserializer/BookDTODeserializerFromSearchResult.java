@@ -36,21 +36,6 @@ public class BookDTODeserializerFromSearchResult implements JsonDeserializer<Boo
         String[] workKeyArray = jsonObject.get("key").getAsString().split("/");
         String workKey = workKeyArray[workKeyArray.length-1];
 
-        // description is retrieved from the "work" of the book
-        // TODO: Implement getting the work in SearchFacade
-        String description = null;
-        JsonElement descriptionElement = jsonObject.get("description");
-        if (descriptionElement != null && !descriptionElement.isJsonNull()) {
-            if (descriptionElement.isJsonPrimitive()) {
-                if (descriptionElement.getAsJsonPrimitive().isString()) {
-                    description = descriptionElement.getAsString();
-                }
-            }
-            else {
-                description = descriptionElement.getAsJsonObject().get("value").getAsString();
-            }
-        }
-
         return new BookDTO(workKey, title, first_publish_year, number_of_pages_median, thumbnail_urls, authors, subjects);
     }
 
