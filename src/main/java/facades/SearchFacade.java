@@ -6,6 +6,7 @@ import deserializer.BookDetailsWorkDeserializer;
 import deserializer.BookSearchResultsDTODeserializer;
 import dtos.*;
 import utils.HttpUtils;
+import utils.JsonUtils;
 
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
@@ -107,12 +108,13 @@ public class SearchFacade {
         if (jsonSearchResults.size() == 0) {
             throw new WebApplicationException("Book not found with this ID", 404);
         }
-        String editionKey = jsonSearchResults.get(0).getAsJsonObject().get("cover_edition_key").getAsString();
+        String editionKey = JsonUtils.getString(jsonSearchResults.get(0).getAsJsonObject().get("cover_edition_key"));
 
         BookSearchResultsDTO bookSearchResults = bigGson.fromJson(jsonElement, BookSearchResultsDTO.class);
         BookDTO book = bookSearchResults.getResults().get(0);
         BookDetailsWorkDTO work = getWork(key);
-        BookDetailsEditionDTO edition = getEdition(editionKey);
+        // if no editionKey was present, initialise a DTO with default values
+        BookDetailsEditionDTO edition = !editionKey.isEmpty() ? getEdition(editionKey) : new BookDetailsEditionDTO();
 
         return new BookWithDetailsDTO(book, work, edition);
     }

@@ -1,5 +1,6 @@
 package dtos;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookDetailsEditionDTO {
@@ -15,6 +16,14 @@ public class BookDetailsEditionDTO {
         this.series = series;
         this.edition_name = edition_name;
         this.physical_format = physical_format;
+    }
+
+    public BookDetailsEditionDTO() {
+        this.subtitle = "";
+        this.description = "";
+        this.series = new ArrayList<>();
+        this.edition_name = "";
+        this.physical_format = "";
     }
 
     public String getSubtitle() {
