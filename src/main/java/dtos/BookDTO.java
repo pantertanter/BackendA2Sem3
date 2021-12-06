@@ -4,7 +4,6 @@ import java.util.List;
 
 public class BookDTO {
     private String key;
-    private String description;
     private String title;
     private int first_publish_year;
     private int number_of_pages_median;
@@ -20,5 +19,33 @@ public class BookDTO {
         this.thumbnail_urls = thumbnail_urls;
         this.authors = authors;
         this.subjects = subjects;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public int getFirst_publish_year() {
+        return first_publish_year;
+    }
+
+    public int getNumber_of_pages_median() {
+        return number_of_pages_median;
+    }
+
+    public List<String> getThumbnail_urls() {
+        return thumbnail_urls;
+    }
+
+    public List<AuthorDTO> getAuthors() {
+        return authors;
+    }
+
+    public List<SubjectDTO> getSubjects() {
+        return subjects;
     }
 }
