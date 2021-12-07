@@ -83,6 +83,30 @@ public class LibraryResource {
         return GSON.toJson(resultDTO);
     }
 
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("edit/{key}/status/{status}")
+    @RolesAllowed("user")
+    public String updateStatus(@PathParam("key") String key, @PathParam("status") String status) {
+        String username = securityContext.getUserPrincipal().getName();
+        LibraryItemDTO oldItem = userFacade.getBook(username, key);
+        oldItem.setStatus(status);
+        LibraryItemDTO newItem = userFacade.updateBook(username, oldItem);
+        return GSON.toJson(newItem);
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("edit/{key}/rating/{rating}")
+    @RolesAllowed("user")
+    public String updateRating(@PathParam("key") String key, @PathParam("rating") int rating) {
+        String username = securityContext.getUserPrincipal().getName();
+        LibraryItemDTO oldItem = userFacade.getBook(username, key);
+        oldItem.setRating(rating);
+        LibraryItemDTO newItem = userFacade.updateBook(username, oldItem);
+        return GSON.toJson(newItem);
+    }
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON)
     @Path("delete/{key}")
