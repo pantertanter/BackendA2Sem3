@@ -92,6 +92,27 @@ public class UserFacade {
         }
     }
 
+    public LibraryItemDTO getBook(String username, String key) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            User user = em.find(User.class, username);
+            LibraryItem item = null;
+            for (LibraryItem li : user.getLibraryItems()) {
+                if (li.getBookKey().equals(key)) {
+                    item = li;
+                    break;
+                }
+            }
+            if (item == null) {
+                throw new WebApplicationException("Item not found in your library", 404);
+            }
+            return new LibraryItemDTO(item);
+        }
+        finally {
+            em.close();
+        }
+    }
+
     public LibraryDTO getLibrary(String username) throws IOException, ExecutionException, InterruptedException {
         SearchFacade sf = SearchFacade.getSearchFacade();
         EntityManager em = emf.createEntityManager();
