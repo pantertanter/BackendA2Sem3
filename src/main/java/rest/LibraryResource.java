@@ -49,6 +49,16 @@ public class LibraryResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
+    @Path("get/{key}")
+    @RolesAllowed("user")
+    public String getBook(@PathParam("key") String key) {
+        String username = securityContext.getUserPrincipal().getName();
+        LibraryItemDTO res = userFacade.getBook(username, key);
+        return GSON.toJson(res);
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("get")
     @RolesAllowed("user")
     public String getLibrary() throws IOException, ExecutionException, InterruptedException {
