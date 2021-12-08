@@ -7,8 +7,8 @@ public class LibraryItemWithBookDTO {
 
     // change this when status and ratings exist.
     public LibraryItemWithBookDTO(LibraryItemDTO libraryItem, BookDTO book) {
-        this.status = "unread";
-        this.rating = 0;
+        this.status = libraryItem.getStatus();
+        this.rating = libraryItem.getRating();
         this.book = book;
     }
 }
