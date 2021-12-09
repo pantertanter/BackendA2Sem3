@@ -28,7 +28,6 @@ public class SearchResource {
                               @DefaultValue("25") @QueryParam("limit") int limit,
                               @DefaultValue("0") @QueryParam("offset") int offset)
             throws IOException {
-        /* TODO: Maybe add pagination parameters to the endpoint. */
         BookSearchResultsDTO result = searchFacade.getBookSearchResult(search, limit, offset);
         return GSON.toJson(result);
     }
