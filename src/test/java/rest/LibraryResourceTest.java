@@ -128,7 +128,7 @@ class LibraryResourceTest {
     @Test
     void addBookForUser() {
         login("user", "test");
-        String bookKey = "OL679360W";
+        String bookKey = "OL453936W";
         given()
                 .accept(MediaType.APPLICATION_JSON)
                 .header("x-access-token", securityToken)
