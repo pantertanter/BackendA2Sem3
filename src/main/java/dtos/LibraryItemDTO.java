@@ -46,7 +46,15 @@ public class LibraryItemDTO {
         return status;
     }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public int getRating() {
         return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
     }
 }

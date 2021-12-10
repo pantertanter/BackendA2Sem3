@@ -76,16 +76,51 @@ public class UserFacade {
         }
     }
 
-    public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) {
+    public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) throws IOException {
+        SearchFacade sf = SearchFacade.getSearchFacade();
+        if (!sf.bookExists(itemDTO.getBookKey())) {
+            throw new WebApplicationException("Book not found with this ID", 404);
+        }
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, username);
-        LibraryItem itemEntity = new LibraryItem(itemDTO);
-        user.addToLibrary(itemEntity);
+        LibraryItem item = new LibraryItem(itemDTO);
+        LibraryItem existing = null;
+        for (LibraryItem li : user.getLibraryItems()) {
+            if (li.getBookKey().equals(itemDTO.getBookKey())) {
+                existing = li;
+                break;
+            }
+        }
+        if (existing != null) {
+            throw new WebApplicationException("Item already in library", 409);
+        }
+        user.addToLibrary(item);
         try {
             em.getTransaction().begin();
             em.merge(user);
             em.getTransaction().commit();
-            return new LibraryItemDTO(itemEntity);
+            return new LibraryItemDTO(item);
+        }
+        finally {
+            em.close();
+        }
+    }
+
+    public LibraryItemDTO getBook(String username, String key) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            User user = em.find(User.class, username);
+            LibraryItem item = null;
+            for (LibraryItem li : user.getLibraryItems()) {
+                if (li.getBookKey().equals(key)) {
+                    item = li;
+                    break;
+                }
+            }
+            if (item == null) {
+                throw new WebApplicationException("Item not found in your library", 404);
+            }
+            return new LibraryItemDTO(item);
         }
         finally {
             em.close();

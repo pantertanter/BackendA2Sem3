@@ -73,7 +73,7 @@ class UserFacadeTest {
     }
 
     @Test
-    void addBook() {
+    void addBook() throws IOException {
         LibraryItemDTO item = new LibraryItemDTO("OL679360W");
         facade.addBook(u1.getUserName(), item);
 
@@ -81,6 +81,15 @@ class UserFacadeTest {
         User user = em.find(User.class, u1.getUserName());
         assertEquals(item.getBookKey(), user.getLibraryItems().get(0).getBookKey());
         em.close();
+    }
+
+    @Test
+    void addBook_existing() {
+        WebApplicationException e = assertThrows(WebApplicationException.class, () -> {
+            facade.addBook(u2.getUserName(), new LibraryItemDTO(li1));
+        });
+        assertEquals(409, e.getResponse().getStatus());
+        assertEquals("Item already in library", e.getMessage());
     }
 
     @Test
