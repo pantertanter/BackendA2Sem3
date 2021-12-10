@@ -84,6 +84,15 @@ class UserFacadeTest {
     }
 
     @Test
+    void addBook_existing() {
+        WebApplicationException e = assertThrows(WebApplicationException.class, () -> {
+            facade.addBook(u2.getUserName(), new LibraryItemDTO(li1));
+        });
+        assertEquals(409, e.getResponse().getStatus());
+        assertEquals("Item already in library", e.getMessage());
+    }
+
+    @Test
     void getLibrary() throws IOException, ExecutionException, InterruptedException {
         assertEquals(0, facade.getLibrary(u1.getUserName()).getSize());
         LibraryItemDTO item = new LibraryItemDTO("OL679360W");

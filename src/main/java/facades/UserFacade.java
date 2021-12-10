@@ -79,13 +79,23 @@ public class UserFacade {
     public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) {
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, username);
-        LibraryItem itemEntity = new LibraryItem(itemDTO);
-        user.addToLibrary(itemEntity);
+        LibraryItem item = new LibraryItem(itemDTO);
+        LibraryItem existing = null;
+        for (LibraryItem li : user.getLibraryItems()) {
+            if (li.getBookKey().equals(itemDTO.getBookKey())) {
+                existing = li;
+                break;
+            }
+        }
+        if (existing != null) {
+            throw new WebApplicationException("Item already in library", 409);
+        }
+        user.addToLibrary(item);
         try {
             em.getTransaction().begin();
             em.merge(user);
             em.getTransaction().commit();
-            return new LibraryItemDTO(itemEntity);
+            return new LibraryItemDTO(item);
         }
         finally {
             em.close();
