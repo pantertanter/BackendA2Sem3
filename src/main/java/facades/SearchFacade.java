@@ -110,6 +110,7 @@ public class SearchFacade {
         if (jsonSearchResults.size() == 0) {
             throw new WebApplicationException("Book not found with this ID", 404);
         }
+
         String editionKey = JsonUtils.getString(jsonSearchResults.get(0).getAsJsonObject().get("cover_edition_key"));
 
         BookSearchResultsDTO bookSearchResults = bigGson.fromJson(jsonElement, BookSearchResultsDTO.class);
@@ -128,6 +129,14 @@ public class SearchFacade {
         JsonElement jsonElement= JsonParser.parseString(json);
         JsonArray jsonSearchResults = jsonElement.getAsJsonObject().getAsJsonArray("docs");
         return jsonSearchResults.size() > 0;
+    }
+
+    public BestSellerListDTO getBestSellerList(String genre) throws IOException {
+        String url = "https://api.nytimes.com/svc/books/v3/lists/current/" + genre + ".json?api-key=6z5kDyhAxPsb6RBNt4yuxJD8iB2ZHsqq";
+        String json = HttpUtils.fetch(url);
+
+        JsonElement jsonElement = JsonParser.parseString(json).getAsJsonObject().get("results");
+        return bigGson.fromJson(jsonElement, BestSellerListDTO.class);
     }
 
     public AuthorDTO getAuthor(String id) throws IOException {
