@@ -40,7 +40,7 @@ public class LibraryResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("add/{key}")
     @RolesAllowed("user")
-    public String addBook(@PathParam("key") String key) {
+    public String addBook(@PathParam("key") String key) throws IOException {
         String username = securityContext.getUserPrincipal().getName();
         LibraryItemDTO itemDTO = new LibraryItemDTO(key);
         LibraryItemDTO resultDTO = userFacade.addBook(username, itemDTO);

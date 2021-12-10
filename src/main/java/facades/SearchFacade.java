@@ -121,6 +121,15 @@ public class SearchFacade {
         return new BookWithDetailsDTO(book, work, edition);
     }
 
+    public boolean bookExists(String key) throws IOException {
+        String url = "https://openlibrary.org/search.json?q=key:/works/" + key + "&fields=\"\"&limit=1";
+        String json = HttpUtils.fetch(url);
+
+        JsonElement jsonElement= JsonParser.parseString(json);
+        JsonArray jsonSearchResults = jsonElement.getAsJsonObject().getAsJsonArray("docs");
+        return jsonSearchResults.size() > 0;
+    }
+
     public AuthorDTO getAuthor(String id) throws IOException {
         Gson gson = new Gson();
         String url = "https://openlibrary.org/authors/" + id + ".json";

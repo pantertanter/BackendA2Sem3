@@ -73,7 +73,7 @@ class UserFacadeTest {
     }
 
     @Test
-    void addBook() {
+    void addBook() throws IOException {
         LibraryItemDTO item = new LibraryItemDTO("OL679360W");
         facade.addBook(u1.getUserName(), item);
 

@@ -76,7 +76,11 @@ public class UserFacade {
         }
     }
 
-    public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) {
+    public LibraryItemDTO addBook(String username, LibraryItemDTO itemDTO) throws IOException {
+        SearchFacade sf = SearchFacade.getSearchFacade();
+        if (!sf.bookExists(itemDTO.getBookKey())) {
+            throw new WebApplicationException("Book not found with this ID", 404);
+        }
         EntityManager em = emf.createEntityManager();
         User user = em.find(User.class, username);
         LibraryItem item = new LibraryItem(itemDTO);
