@@ -10,7 +10,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 
-@Path("/list")
+@Path("/nyt/list")
 public class BestSellerListResource {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -24,9 +24,9 @@ public class BestSellerListResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("{genre}")
-    public String getList(@PathParam("genre") String genre) throws IOException {
-        BestSellerListDTO List = searchFacade.getBestSellerList(genre);
-        return GSON.toJson(List);
+    @Path("{list}")
+    public String getList(@PathParam("list") String list) throws IOException {
+        BestSellerListDTO listDTO = searchFacade.getBestSellerList(list);
+        return GSON.toJson(listDTO);
     }
 }

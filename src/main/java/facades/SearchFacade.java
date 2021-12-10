@@ -123,10 +123,13 @@ public class SearchFacade {
     }
 
     public BestSellerListDTO getBestSellerList(String genre) throws IOException {
-        String url = "https://api.nytimes.com/lists/current/" + genre + ".json";
+        String url = "https://api.nytimes.com/svc/books/v3/lists/current/" + genre + ".json?api-key=6z5kDyhAxPsb6RBNt4yuxJD8iB2ZHsqq";
         String json = HttpUtils.fetch(url);
-        return bigGson.fromJson(json, BestSellerListDTO.class);
-    }
+
+        JsonElement jsonElement = JsonParser.parseString(json).getAsJsonObject().get("results");
+        return bigGson.fromJson(jsonElement, BestSellerListDTO.class);
+
+        }
 
     public AuthorDTO getAuthor(String id) throws IOException {
         Gson gson = new Gson();
