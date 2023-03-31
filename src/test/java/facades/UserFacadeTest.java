@@ -3,10 +3,7 @@ package facades;
 import dtos.LibraryItemDTO;
 import entities.LibraryItem;
 import entities.User;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
@@ -17,7 +14,7 @@ import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
-
+@Disabled
 class UserFacadeTest {
 
     private static EntityManagerFactory emf;

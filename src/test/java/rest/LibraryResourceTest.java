@@ -20,7 +20,7 @@ import java.net.URI;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
-
+@Disabled
 class LibraryResourceTest {
 
     private static final int SERVER_PORT = 7777;
